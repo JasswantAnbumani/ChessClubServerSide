@@ -23,6 +23,23 @@ mongoose.connect(MONGO_URI)
     process.exit(1);
   });
 
+// ==== SCHEMA PENGUMUMAN =====
+app.post("/api/pengumuman", async (req, res) => {
+  const { title, content } = req.body;
+  if (!title || !content) return res.status(400).json({ message: "Judul dan isi wajib" });
+
+  try {
+    const newPengumuman = new Pengumuman({ title, content });
+    await newPengumuman.save();
+
+    console.log("📢 Pengumuman Baru Telah Di Tambahkan"); // << log otomatis
+    res.status(201).json(newPengumuman);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 // ===== SCHEMA PENDAFTARAN =====
 const pendaftaranSchema = new mongoose.Schema({
   nama: { type: String, required: true },
@@ -235,3 +252,4 @@ app.get("/api/albums", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
+
